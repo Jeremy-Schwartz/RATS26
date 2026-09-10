@@ -45,10 +45,26 @@ async function fetchJson(url) {
 
 export function mergeOddsAndScores(odds, scores, config) {
   const scoresById = new Map(scores.map((game) => [game.id, game]));
+  const gamesById = new Map();
 
-  return odds.map((game) => {
-    const scoreGame = scoresById.get(game.id);
-    const scoreMap = new Map((scoreGame?.scores ?? []).map((score) => [score.name, Number(score.score)]));
+  for (const game of odds) {
+    gamesById.set(game.id, normalizeOddsGame(game, scoresById.get(game.id), config));
+  }
+
+  for (const scoreGame of scores) {
+    if (!gamesById.has(scoreGame.id)) {
+      gamesById.set(scoreGame.id, normalizeScoreGame(scoreGame, config));
+    }
+  }
+
+  return [...gamesById.values()].sort((a, b) => {
+    const weekDelta = (a.week ?? 0) - (b.week ?? 0);
+    return weekDelta || new Date(a.commenceTime) - new Date(b.commenceTime);
+  });
+}
+
+function normalizeOddsGame(game, scoreGame, config) {
+  const scoreMap = buildScoreMap(scoreGame);
     const market = selectSpreadMarket(game, config);
     const spreads = {};
 
@@ -56,7 +72,7 @@ export function mergeOddsAndScores(odds, scores, config) {
       spreads[outcome.name] = Number(outcome.point);
     }
 
-    return {
+  return {
       id: game.id,
       season: Number(config.season),
       week: inferWeek(game.commence_time, config),
@@ -68,7 +84,27 @@ export function mergeOddsAndScores(odds, scores, config) {
       completed: Boolean(scoreGame?.completed),
       spreads
     };
-  });
+}
+
+function normalizeScoreGame(game, config) {
+  const scoreMap = buildScoreMap(game);
+
+  return {
+    id: game.id,
+    season: Number(config.season),
+    week: inferWeek(game.commence_time, config),
+    commenceTime: game.commence_time,
+    homeTeam: game.home_team,
+    awayTeam: game.away_team,
+    homeScore: scoreMap.has(game.home_team) ? scoreMap.get(game.home_team) : null,
+    awayScore: scoreMap.has(game.away_team) ? scoreMap.get(game.away_team) : null,
+    completed: Boolean(game.completed),
+    spreads: {}
+  };
+}
+
+function buildScoreMap(game) {
+  return new Map((game?.scores ?? []).map((score) => [score.name, Number(score.score)]));
 }
 
 function selectSpreadMarket(game, config) {
