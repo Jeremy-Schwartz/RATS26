@@ -1,0 +1,246 @@
+{
+  "updatedAt": "2026-09-10T01:53:06.151Z",
+  "source": "the-odds-api",
+  "games": [
+    {
+      "id": "8c94552d022acec4a0458d70c19d3da9",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-10T00:23:22Z",
+      "homeTeam": "Seattle Seahawks",
+      "awayTeam": "New England Patriots",
+      "homeScore": 0,
+      "awayScore": 7,
+      "completed": false,
+      "spreads": {
+        "New England Patriots": -7.5,
+        "Seattle Seahawks": 7.5
+      }
+    },
+    {
+      "id": "acc580d74344ea3b31bbcdd057fe6a9c",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-11T00:35:00Z",
+      "homeTeam": "Los Angeles Rams",
+      "awayTeam": "San Francisco 49ers",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Los Angeles Rams": -3.5,
+        "San Francisco 49ers": 3.5
+      }
+    },
+    {
+      "id": "95c01d1bb797d6df14824b106c5a9130",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Pittsburgh Steelers",
+      "awayTeam": "Atlanta Falcons",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Atlanta Falcons": 3.5,
+        "Pittsburgh Steelers": -3.5
+      }
+    },
+    {
+      "id": "b6cfdcbafa61ce220ba87dc2d9b80c77",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Indianapolis Colts",
+      "awayTeam": "Baltimore Ravens",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Baltimore Ravens": -3.5,
+        "Indianapolis Colts": 3.5
+      }
+    },
+    {
+      "id": "7e09efed7e12c659b82740b67ce2f9a1",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Houston Texans",
+      "awayTeam": "Buffalo Bills",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Buffalo Bills": -1.5,
+        "Houston Texans": 1.5
+      }
+    },
+    {
+      "id": "fc362aff0d889ec52d358307a70c32ed",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Carolina Panthers",
+      "awayTeam": "Chicago Bears",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Carolina Panthers": 3,
+        "Chicago Bears": -3
+      }
+    },
+    {
+      "id": "ed6d24ff979f9c71979fead577b0b3f7",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Cincinnati Bengals",
+      "awayTeam": "Tampa Bay Buccaneers",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Cincinnati Bengals": -3.5,
+        "Tampa Bay Buccaneers": 3.5
+      }
+    },
+    {
+      "id": "e55c6fe19fce094ce214c8b0e5b504e9",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Jacksonville Jaguars",
+      "awayTeam": "Cleveland Browns",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Cleveland Browns": 8.5,
+        "Jacksonville Jaguars": -8.5
+      }
+    },
+    {
+      "id": "c1d3fcec25aaeb06ebd2244d33d338e0",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Detroit Lions",
+      "awayTeam": "New Orleans Saints",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Detroit Lions": -7,
+        "New Orleans Saints": 7
+      }
+    },
+    {
+      "id": "7dddb296a42e7a41a774b24bd1709ce1",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T17:00:00Z",
+      "homeTeam": "Tennessee Titans",
+      "awayTeam": "New York Jets",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "New York Jets": 1.5,
+        "Tennessee Titans": -1.5
+      }
+    },
+    {
+      "id": "1edfa5ceaa1ad2cb57df1c1b908731f6",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T20:25:00Z",
+      "homeTeam": "Los Angeles Chargers",
+      "awayTeam": "Arizona Cardinals",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Arizona Cardinals": 9.5,
+        "Los Angeles Chargers": -9.5
+      }
+    },
+    {
+      "id": "cb77efed7e711d25a72c1a2a0a1af119",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T20:25:00Z",
+      "homeTeam": "Minnesota Vikings",
+      "awayTeam": "Green Bay Packers",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Green Bay Packers": 1.5,
+        "Minnesota Vikings": -1.5
+      }
+    },
+    {
+      "id": "c5d95f48a16849ab6bebc68fbbfcb74a",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T20:25:00Z",
+      "homeTeam": "Las Vegas Raiders",
+      "awayTeam": "Miami Dolphins",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Las Vegas Raiders": -3,
+        "Miami Dolphins": 3
+      }
+    },
+    {
+      "id": "17885cb8dcade8f6c3bce14b2de805e8",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-13T20:25:00Z",
+      "homeTeam": "Philadelphia Eagles",
+      "awayTeam": "Washington Commanders",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Philadelphia Eagles": -5.5,
+        "Washington Commanders": 5.5
+      }
+    },
+    {
+      "id": "3e646c7479c57f5d9752d8c7dfe7059b",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-14T00:20:00Z",
+      "homeTeam": "New York Giants",
+      "awayTeam": "Dallas Cowboys",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Dallas Cowboys": -3,
+        "New York Giants": 3
+      }
+    },
+    {
+      "id": "5ad8135dc2b5f27de0b777acd317855a",
+      "season": 2026,
+      "week": 1,
+      "commenceTime": "2026-09-15T00:15:00Z",
+      "homeTeam": "Kansas City Chiefs",
+      "awayTeam": "Denver Broncos",
+      "homeScore": null,
+      "awayScore": null,
+      "completed": false,
+      "spreads": {
+        "Denver Broncos": 3,
+        "Kansas City Chiefs": -3
+      }
+    }
+  ]
+}

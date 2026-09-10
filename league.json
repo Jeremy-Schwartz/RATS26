@@ -1,0 +1,15 @@
+{
+  "season": 2026,
+  "members": [
+    { "id": "sam", "name": "Sam", "team": "SEA" },
+    { "id": "dylan", "name": "Dylan", "team": "BUF" },
+    { "id": "zach", "name": "Zach", "team": "CLE" },
+    { "id": "trevor", "name": "Trevor", "team": "MIA" },
+    { "id": "willis", "name": "Willis", "team": "DET" },
+    { "id": "ryan", "name": "Ryan", "team": "KC" },
+    { "id": "noah", "name": "Noah", "team": "PIT" },
+    { "id": "ian", "name": "Ian", "team": "LAC" },
+    { "id": "brandon", "name": "Brandon", "team": "TB" },
+    { "id": "jeremy", "name": "Jeremy", "team": "IND" }
+  ]
+}
