@@ -50,7 +50,9 @@ When the server is running, it also exposes:
 - `POST /api/sync` to pull latest odds and scores
 - `GET /api/config` to check current API settings
 
-By default, the server syncs every 60 minutes when `ODDS_API_KEY` is set. Before the regular season starts, sync pulls Week 1. After kickoff week, sync pulls the current regular-season week and keeps prior weeks in `data\games.json`.
+By default, the server syncs every 15 minutes when `ODDS_API_KEY` is set. Before the regular season starts, sync pulls Week 1. After kickoff week, sync pulls the current regular-season week and keeps prior weeks in `data\games.json`.
+
+Spreads are treated as closing lines. Each sync updates the spread before kickoff. Once a game starts, the app locks the most recent synced spread for that game and will not overwrite it later. For the closest approximation to the true closing line, run sync frequently before game windows, such as every 5-15 minutes on game days.
 
 ## ATS rule
 
@@ -64,4 +66,4 @@ ATS margin = team score - opponent score + spread
 - Less than 0: ATS loss
 - Exactly 0: push
 
-The spread is captured in `data\games.json` during sync so standings stay stable until the next intentional sync.
+The spread is captured in `data\games.json` during sync. Once kickoff passes, that captured spread is locked for standings calculations.
