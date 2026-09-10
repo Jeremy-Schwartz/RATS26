@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RATS 2026</title>
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        --cp-bg: #f7f4ef;
+        --cp-bg-elevated: #fcfbf8;
+        --cp-surface: #ffffff;
+        --cp-surface-soft: #f5f5f5;
+        --cp-border: #dedede;
+        --cp-border-strong: #919191;
+        --cp-text: #242424;
+        --cp-text-muted: #5c5c5c;
+        --cp-text-soft: #6f6f6f;
+        --cp-accent: #b11f4b;
+        --cp-accent-hover: #9a1a41;
+        --cp-accent-soft: rgba(177, 31, 75, 0.08);
+        --cp-accent-fg: #ffffff;
+        --cp-success: #16a34a;
+        --cp-danger: #dc2626;
+        --cp-warning: #f59e0b;
+        --cp-link: #0078d4;
+        --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+        --cp-overlay: rgba(255, 255, 255, 0.8);
+        --cp-panel: rgba(255, 255, 255, 0.86);
+        --cp-panel-strong: rgba(255, 255, 255, 0.96);
+        --cp-sheen: rgba(255, 255, 255, 0.55);
+        --cp-highlight: rgba(177, 31, 75, 0.12);
+      }
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --cp-bg: #3d3b3a;
+        --cp-bg-elevated: #343231;
+        --cp-surface: #292929;
+        --cp-surface-soft: #2e2e2e;
+        --cp-border: #474747;
+        --cp-border-strong: #5f5f5f;
+        --cp-text: #dedede;
+        --cp-text-muted: #919191;
+        --cp-text-soft: #b0b0b0;
+        --cp-accent: #fd8ea1;
+        --cp-accent-hover: #fb7b91;
+        --cp-accent-soft: rgba(253, 142, 161, 0.14);
+        --cp-accent-fg: #1a1a1a;
+        --cp-success: #4ade80;
+        --cp-danger: #f87171;
+        --cp-warning: #fbbf24;
+        --cp-link: #4da6ff;
+        --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+        --cp-overlay: rgba(41, 41, 41, 0.88);
+        --cp-panel: rgba(41, 41, 41, 0.72);
+        --cp-panel-strong: rgba(41, 41, 41, 0.96);
+        --cp-sheen: rgba(255, 255, 255, 0.04);
+        --cp-highlight: rgba(253, 142, 161, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--cp-bg);
+        color: var(--cp-text);
+        font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1;
+      }
+
+      .subtitle,
+      .muted {
+        color: var(--cp-text-muted);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        border: 1px solid var(--cp-border);
+        border-radius: 0.625rem;
+        background: var(--cp-surface);
+        color: var(--cp-text);
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+
+      .button.primary {
+        background: var(--cp-accent);
+        border-color: var(--cp-accent);
+        color: var(--cp-accent-fg);
+      }
+
+      .button:hover {
+        border-color: var(--cp-border-strong);
+      }
+
+      .button.primary:hover {
+        background: var(--cp-accent-hover);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: var(--cp-surface);
+        border: 1px solid var(--cp-border);
+        border-radius: 16px;
+        box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+      }
+
+      .stat {
+        padding: 16px;
+      }
+
+      .stat-label {
+        color: var(--cp-text-muted);
+        font-size: 0.85rem;
+      }
+
+      .stat-value {
+        margin-top: 4px;
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+        gap: 16px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 18px 0;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--cp-border);
+        text-align: left;
+      }
+
+      th {
+        color: var(--cp-text-muted);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      tbody tr:hover {
+        background: var(--cp-surface-soft);
+      }
+
+      .rank {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 0.625rem;
+        background: var(--cp-accent-soft);
+        color: var(--cp-accent);
+        font-weight: 700;
+      }
+
+      .team-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .team-abbr {
+        font-weight: 700;
+      }
+
+      .record {
+        font-family: Consolas, "Courier New", Courier, monospace;
+        font-weight: 700;
+      }
+
+      .badge {
+        display: inline-flex;
+        border-radius: 999px;
+        border: 1px solid var(--cp-border);
+        padding: 4px 9px;
+        color: var(--cp-text-muted);
+        background: var(--cp-surface-soft);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .select {
+        width: 100%;
+        margin-top: 14px;
+        border: 1px solid var(--cp-border);
+        border-radius: 0.625rem;
+        background: var(--cp-surface);
+        color: var(--cp-text);
+        padding: 10px 12px;
+      }
+
+      .results {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .result-dot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 0.625rem;
+        border: 1px solid var(--cp-border);
+        color: var(--cp-text);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .result-dot.win {
+        color: var(--cp-success);
+        background: var(--cp-surface-soft);
+      }
+
+      .result-dot.loss {
+        color: var(--cp-danger);
+        background: var(--cp-surface-soft);
+      }
+
+      .result-dot.push {
+        color: var(--cp-warning);
+        background: var(--cp-surface-soft);
+      }
+
+      .result-dot.pending {
+        color: var(--cp-text-muted);
+        background: var(--cp-surface-soft);
+      }
+
+      .details {
+        padding: 18px;
+      }
+
+      .selected-summary {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 14px;
+        padding: 14px;
+        border: 1px solid var(--cp-border);
+        border-radius: 0.625rem;
+        background: var(--cp-accent-soft);
+      }
+
+      .detail-card {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--cp-border);
+      }
+
+      .detail-card:last-child {
+        border-bottom: 0;
+      }
+
+      .detail-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+
+      .game-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .game {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid var(--cp-border);
+        border-radius: 0.625rem;
+        background: var(--cp-surface-soft);
+      }
+
+      .game-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+        color: var(--cp-text-muted);
+        font-size: 0.86rem;
+      }
+
+      .status {
+        margin-top: 12px;
+        min-height: 20px;
+        color: var(--cp-text-muted);
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .app {
+          padding: 24px 12px;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4),
+        th:nth-child(5),
+        td:nth-child(5) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <div>
+          <h1>RATS 2026</h1>
+          <div class="subtitle">Random team assignments. Best regular-season record against the spread wins.</div>
+        </div>
+        <div class="actions">
+          <button class="button" id="refreshButton" type="button">Refresh</button>
+          <button class="button primary" id="syncButton" type="button">Sync odds</button>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="card stat">
+          <div class="stat-label">Season</div>
+          <div class="stat-value" id="seasonStat">-</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">League members</div>
+          <div class="stat-value" id="membersStat">-</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Games tracked</div>
+          <div class="stat-value" id="gamesStat">-</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Last sync</div>
+          <div class="stat-value" id="syncStat">Not synced yet</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Leaderboard</h2>
+              <div class="muted">Ranked by ATS win percentage, then wins.</div>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Member</th>
+                <th>Team</th>
+                <th>Record</th>
+                <th>Win %</th>
+                <th>Streak</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard"></tbody>
+          </table>
+        </div>
+
+        <aside class="card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Weekly results</h2>
+              <div class="muted">Choose a player/team to see each game's W/L/P status.</div>
+              <select class="select" id="weeklySelector" aria-label="Choose player and team"></select>
+            </div>
+          </div>
+          <div class="details" id="weeklyBoard"></div>
+        </aside>
+      </section>
+
+      <div class="status" id="status"></div>
+    </main>
+
+    <script>
+      const state = {
+        dashboard: null,
+        selectedMemberId: null
+      };
+
+      document.getElementById("refreshButton").addEventListener("click", loadDashboard);
+      document.getElementById("syncButton").addEventListener("click", syncOdds);
+      document.getElementById("weeklySelector").addEventListener("change", (event) => {
+        state.selectedMemberId = event.target.value;
+        renderWeeklyBoard(state.dashboard);
+      });
+
+      loadDashboard();
+
+      async function loadDashboard() {
+        setStatus("Loading dashboard...");
+        const response = await fetch("/api/dashboard");
+        if (!response.ok) {
+          setStatus("Dashboard failed to load.");
+          return;
+        }
+
+        state.dashboard = await response.json();
+        render(state.dashboard);
+        setStatus("");
+      }
+
+      async function syncOdds() {
+        setStatus("Syncing odds and scores...");
+        const response = await fetch("/api/sync", { method: "POST" });
+        const payload = await response.json();
+
+        if (!response.ok) {
+          setStatus(payload.error || "Sync failed. Check ODDS_API_KEY in .env.");
+          return;
+        }
+
+        setStatus(`Synced ${payload.games} games.`);
+        await loadDashboard();
+      }
+
+      function render(data) {
+        const totalGames = data.standings.reduce((sum, row) => sum + row.results.length, 0);
+        document.getElementById("seasonStat").textContent = data.league.season;
+        document.getElementById("membersStat").textContent = data.league.members.length;
+        document.getElementById("gamesStat").textContent = totalGames;
+        document.getElementById("syncStat").textContent = data.updatedAt
+          ? new Date(data.updatedAt).toLocaleString()
+          : "Not synced yet";
+
+        document.getElementById("leaderboard").innerHTML = data.standings.map((row) => `
+          <tr>
+            <td><span class="rank">${row.rank}</span></td>
+            <td>${escapeHtml(row.memberName)}</td>
+            <td>
+              <div class="team-cell">
+                <span class="team-abbr">${escapeHtml(row.team)}</span>
+                <span class="muted">${escapeHtml(row.teamName)}</span>
+              </div>
+            </td>
+            <td><span class="record">${row.wins}-${row.losses}-${row.pushes}</span></td>
+            <td>${formatPct(row.winPct)}</td>
+            <td><span class="badge">${escapeHtml(row.streak)}</span></td>
+          </tr>
+        `).join("");
+
+        renderWeeklySelector(data);
+        renderWeeklyBoard(data);
+      }
+
+      function renderWeeklySelector(data) {
+        const selector = document.getElementById("weeklySelector");
+        if (!state.selectedMemberId || !data.standings.some((row) => row.memberId === state.selectedMemberId)) {
+          state.selectedMemberId = data.standings[0]?.memberId ?? "";
+        }
+
+        selector.innerHTML = data.standings.map((row) => `
+          <option value="${escapeHtml(row.memberId)}" ${row.memberId === state.selectedMemberId ? "selected" : ""}>
+            ${escapeHtml(row.memberName)} / ${escapeHtml(row.team)} - ${row.wins}-${row.losses}-${row.pushes}
+          </option>
+        `).join("");
+      }
+
+      function renderWeeklyBoard(data) {
+        const row = data?.standings.find((standing) => standing.memberId === state.selectedMemberId);
+        const board = document.getElementById("weeklyBoard");
+
+        if (!row) {
+          board.innerHTML = "<div class=\"muted\">No player selected.</div>";
+          return;
+        }
+
+        board.innerHTML = `
+          <div class="selected-summary">
+            <div class="detail-title">
+              <span>${escapeHtml(row.memberName)} / ${escapeHtml(row.teamName)}</span>
+              <span class="badge">${row.wins}-${row.losses}-${row.pushes}</span>
+            </div>
+            <div class="muted">Rank ${row.rank} &middot; ${formatPct(row.winPct)} ATS &middot; Streak ${escapeHtml(row.streak)}</div>
+          </div>
+          <div class="game-list">
+            ${row.results.map((result) => renderGame(result)).join("") || "<div class=\"muted\">No games tracked yet.</div>"}
+          </div>
+        `;
+      }
+
+      function renderGame(result) {
+        const marker = result.result === "pending" ? "-" : result.result[0].toUpperCase();
+        const score = result.teamScore === null ? "TBD" : `${result.teamScore}-${result.opponentScore}`;
+        const spread = result.spread === null ? "No line" : `${result.spread > 0 ? "+" : ""}${result.spread}`;
+        const status = {
+          win: "ATS win",
+          loss: "ATS loss",
+          push: "Push",
+          pending: "Pending"
+        }[result.result];
+
+        return `
+          <div class="game">
+            <span class="result-dot ${result.result}">${marker}</span>
+            <span>
+              <strong>Week ${result.week}: ${escapeHtml(status)}</strong>
+              <div class="game-meta">
+                <span>${result.location === "home" ? "vs" : "at"} ${escapeHtml(result.opponent)}</span>
+                <span>Spread ${spread}</span>
+                ${result.atsMargin === null ? "" : `<span>ATS margin ${formatSigned(result.atsMargin)}</span>`}
+              </div>
+            </span>
+            <span class="record">${score}</span>
+          </div>
+        `;
+      }
+
+      function formatPct(value) {
+        return value.toLocaleString(undefined, { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      }
+
+      function setStatus(message) {
+        document.getElementById("status").textContent = message;
+      }
+
+      function formatSigned(value) {
+        return `${value > 0 ? "+" : ""}${value}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+    </script>
+  </body>
+</html>
