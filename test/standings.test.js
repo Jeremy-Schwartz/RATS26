@@ -151,3 +151,71 @@ test("locks first-seen synced spreads after kickoff", () => {
   assert.equal(merged[0].spreadStatus, "locked");
   assert.equal(merged[0].spreadUpdatedAt, "2026-09-10T00:21:00.000Z");
 });
+
+test("keeps completed score-only games from the scores endpoint", () => {
+  const games = mergeOddsAndScores([], [
+    {
+      id: "completed-game",
+      commence_time: "2026-09-10T00:20:00Z",
+      home_team: "Seattle Seahawks",
+      away_team: "New England Patriots",
+      completed: true,
+      scores: [
+        { name: "Seattle Seahawks", score: "24" },
+        { name: "New England Patriots", score: "20" }
+      ]
+    }
+  ], {
+    season: 2026,
+    bookmaker: "draftkings",
+    spreadMarket: "spreads",
+    regularSeasonStartDate: "2026-09-10T00:00:00Z"
+  });
+
+  assert.equal(games.length, 1);
+  assert.equal(games[0].completed, true);
+  assert.equal(games[0].homeScore, 24);
+  assert.equal(games[0].awayScore, 20);
+});
+
+test("updates final scores after odds disappear while preserving the locked spread", () => {
+  const currentGames = [
+    {
+      id: "completed-game",
+      week: 1,
+      commenceTime: "2026-09-10T00:20:00Z",
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      homeScore: 10,
+      awayScore: 10,
+      completed: false,
+      spreads: {
+        "Seattle Seahawks": -3.5,
+        "New England Patriots": 3.5
+      },
+      spreadStatus: "locked",
+      spreadUpdatedAt: "2026-09-10T00:18:00.000Z",
+      spreadLockedAt: "2026-09-10T00:21:00.000Z"
+    }
+  ];
+  const fetchedGames = [
+    {
+      id: "completed-game",
+      week: 1,
+      commenceTime: "2026-09-10T00:20:00Z",
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      homeScore: 24,
+      awayScore: 20,
+      completed: true,
+      spreads: {}
+    }
+  ];
+
+  const merged = mergePersistedGames(currentGames, fetchedGames, new Date("2026-09-10T03:30:00.000Z"));
+
+  assert.equal(merged[0].homeScore, 24);
+  assert.equal(merged[0].awayScore, 20);
+  assert.equal(merged[0].completed, true);
+  assert.equal(merged[0].spreads["Seattle Seahawks"], -3.5);
+});
