@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describeApiKey, loadDotEnv } from "./env.js";
 import { buildStandings } from "./standings.js";
+import { mergePersistedGames } from "./lineLocking.js";
 import { fetchOddsApiGames } from "./oddsApi.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +25,7 @@ const config = {
   region: process.env.REGION ?? "us",
   oddsFormat: process.env.ODDS_FORMAT ?? "american",
   bookmaker: process.env.BOOKMAKER ?? "draftkings",
-  syncIntervalMinutes: Number(process.env.SYNC_INTERVAL_MINUTES ?? 60),
+  syncIntervalMinutes: Number(process.env.SYNC_INTERVAL_MINUTES ?? 15),
   regularSeasonStartDate: process.env.REGULAR_SEASON_START_DATE ?? `${process.env.SEASON ?? 2026}-09-10T00:00:00Z`
 };
 
@@ -109,31 +110,6 @@ async function syncGames() {
     ok: true,
     updatedAt: payload.updatedAt,
     games: games.length
-  };
-}
-
-function mergePersistedGames(currentGames, fetchedGames) {
-  const gamesById = new Map(currentGames.map((game) => [game.id, game]));
-
-  for (const fetchedGame of fetchedGames) {
-    const currentGame = gamesById.get(fetchedGame.id);
-    gamesById.set(fetchedGame.id, currentGame ? mergeGame(currentGame, fetchedGame) : fetchedGame);
-  }
-
-  return [...gamesById.values()].sort((a, b) => {
-    const weekDelta = (a.week ?? 0) - (b.week ?? 0);
-    return weekDelta || new Date(a.commenceTime) - new Date(b.commenceTime);
-  });
-}
-
-function mergeGame(currentGame, fetchedGame) {
-  return {
-    ...currentGame,
-    ...fetchedGame,
-    spreads: {
-      ...currentGame.spreads,
-      ...fetchedGame.spreads
-    }
   };
 }
 
