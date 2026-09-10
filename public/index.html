@@ -567,6 +567,7 @@
         const marker = result.result === "pending" ? "-" : result.result[0].toUpperCase();
         const score = result.teamScore === null ? "TBD" : `${result.teamScore}-${result.opponentScore}`;
         const spread = result.spread === null ? "No line" : `${result.spread > 0 ? "+" : ""}${result.spread}`;
+        const spreadStatus = formatSpreadStatus(result);
         const status = {
           win: "ATS win",
           loss: "ATS loss",
@@ -582,6 +583,7 @@
               <div class="game-meta">
                 <span>${result.location === "home" ? "vs" : "at"} ${escapeHtml(result.opponent)}</span>
                 <span>Spread ${spread}</span>
+                <span>${escapeHtml(spreadStatus)}</span>
                 ${result.atsMargin === null ? "" : `<span>ATS margin ${formatSigned(result.atsMargin)}</span>`}
               </div>
             </span>
@@ -600,6 +602,19 @@
 
       function formatSigned(value) {
         return `${value > 0 ? "+" : ""}${value}`;
+      }
+
+      function formatSpreadStatus(result) {
+        if (result.spreadStatus === "locked") {
+          return "Line locked";
+        }
+        if (result.spreadStatus === "open") {
+          return "Pregame line";
+        }
+        if (result.spreadStatus === "missing-line") {
+          return "No line captured";
+        }
+        return "Line status unknown";
       }
 
       function escapeHtml(value) {
