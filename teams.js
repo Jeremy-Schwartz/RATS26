@@ -1,0 +1,37 @@
+export const nflTeams = [
+  { abbreviation: "ARI", name: "Arizona Cardinals" },
+  { abbreviation: "ATL", name: "Atlanta Falcons" },
+  { abbreviation: "BAL", name: "Baltimore Ravens" },
+  { abbreviation: "BUF", name: "Buffalo Bills" },
+  { abbreviation: "CAR", name: "Carolina Panthers" },
+  { abbreviation: "CHI", name: "Chicago Bears" },
+  { abbreviation: "CIN", name: "Cincinnati Bengals" },
+  { abbreviation: "CLE", name: "Cleveland Browns" },
+  { abbreviation: "DAL", name: "Dallas Cowboys" },
+  { abbreviation: "DEN", name: "Denver Broncos" },
+  { abbreviation: "DET", name: "Detroit Lions" },
+  { abbreviation: "GB", name: "Green Bay Packers" },
+  { abbreviation: "HOU", name: "Houston Texans" },
+  { abbreviation: "IND", name: "Indianapolis Colts" },
+  { abbreviation: "JAX", name: "Jacksonville Jaguars" },
+  { abbreviation: "KC", name: "Kansas City Chiefs" },
+  { abbreviation: "LAC", name: "Los Angeles Chargers" },
+  { abbreviation: "LAR", name: "Los Angeles Rams" },
+  { abbreviation: "LV", name: "Las Vegas Raiders" },
+  { abbreviation: "MIA", name: "Miami Dolphins" },
+  { abbreviation: "MIN", name: "Minnesota Vikings" },
+  { abbreviation: "NE", name: "New England Patriots" },
+  { abbreviation: "NO", name: "New Orleans Saints" },
+  { abbreviation: "NYG", name: "New York Giants" },
+  { abbreviation: "NYJ", name: "New York Jets" },
+  { abbreviation: "PHI", name: "Philadelphia Eagles" },
+  { abbreviation: "PIT", name: "Pittsburgh Steelers" },
+  { abbreviation: "SEA", name: "Seattle Seahawks" },
+  { abbreviation: "SF", name: "San Francisco 49ers" },
+  { abbreviation: "TB", name: "Tampa Bay Buccaneers" },
+  { abbreviation: "TEN", name: "Tennessee Titans" },
+  { abbreviation: "WAS", name: "Washington Commanders" }
+];
+
+export const teamsByAbbreviation = new Map(nflTeams.map((team) => [team.abbreviation, team]));
+export const teamsByName = new Map(nflTeams.map((team) => [team.name, team]));
