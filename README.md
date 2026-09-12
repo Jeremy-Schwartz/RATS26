@@ -54,6 +54,23 @@ By default, the server syncs every 15 minutes when `ODDS_API_KEY` is set. Before
 
 Spreads are treated as closing lines. Each sync updates the spread before kickoff. Once a game starts, the app locks the most recent synced spread for that game and will not overwrite it later. For the closest approximation to the true closing line, run sync frequently before game windows, such as every 5-15 minutes on game days.
 
+## Manual line corrections
+
+If a synced line is wrong, add or edit an entry in `data\line-overrides.json`. Overrides are applied on the dashboard and after every sync, so they survive redeploys and cannot be overwritten by the API.
+
+```json
+{
+  "week": 1,
+  "homeTeam": "Seattle Seahawks",
+  "awayTeam": "New England Patriots",
+  "spreads": {
+    "Seattle Seahawks": -3,
+    "New England Patriots": 3
+  },
+  "note": "Manual closing line correction"
+}
+```
+
 ## ATS rule
 
 For each assigned team:
