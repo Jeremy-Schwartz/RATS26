@@ -1,0 +1,13 @@
+[
+  {
+    "gameId": "8c94552d022acec4a0458d70c19d3da9",
+    "week": 1,
+    "homeTeam": "Seattle Seahawks",
+    "awayTeam": "New England Patriots",
+    "spreads": {
+      "Seattle Seahawks": -3,
+      "New England Patriots": 3
+    },
+    "note": "Manual closing line correction"
+  }
+]
