@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { describeApiKey, loadDotEnv } from "./env.js";
 import { buildStandings } from "./standings.js";
 import { mergePersistedGames } from "./lineLocking.js";
+import { applyLineOverrides } from "./lineOverrides.js";
 import { fetchOddsApiGames } from "./oddsApi.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +15,7 @@ const dataDir = path.join(rootDir, "data");
 const publicDir = path.join(rootDir, "public");
 const leaguePath = path.join(dataDir, "league.json");
 const gamesPath = path.join(dataDir, "games.json");
+const lineOverridesPath = path.join(dataDir, "line-overrides.json");
 
 await loadDotEnv(path.join(rootDir, ".env"));
 
@@ -80,8 +82,9 @@ if (config.apiKey && config.syncIntervalMinutes > 0) {
 async function buildDashboardPayload() {
   const league = await readJson(leaguePath);
   const gameStore = await readJson(gamesPath);
-  const standings = buildStandings(league, gameStore.games);
-  const weeks = [...new Set(gameStore.games.map((game) => game.week).filter(Number.isFinite))].sort((a, b) => a - b);
+  const games = applyLineOverrides(gameStore.games, await readOptionalJson(lineOverridesPath, []));
+  const standings = buildStandings(league, games);
+  const weeks = [...new Set(games.map((game) => game.week).filter(Number.isFinite))].sort((a, b) => a - b);
 
   return {
     league: {
@@ -98,7 +101,10 @@ async function buildDashboardPayload() {
 async function syncGames() {
   const currentStore = await readJson(gamesPath);
   const fetchedGames = await fetchOddsApiGames(config);
-  const games = mergePersistedGames(currentStore.games, fetchedGames);
+  const games = applyLineOverrides(
+    mergePersistedGames(currentStore.games, fetchedGames),
+    await readOptionalJson(lineOverridesPath, [])
+  );
   const payload = {
     updatedAt: new Date().toISOString(),
     source: "the-odds-api",
@@ -137,6 +143,14 @@ async function serveStatic(urlPathname, response) {
 
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));
+}
+
+async function readOptionalJson(filePath, fallback) {
+  if (!existsSync(filePath)) {
+    return fallback;
+  }
+
+  return readJson(filePath);
 }
 
 async function sendJson(response, data) {
