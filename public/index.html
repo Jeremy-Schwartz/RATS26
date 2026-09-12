@@ -608,6 +608,9 @@
         if (result.spreadStatus === "locked") {
           return "Line locked";
         }
+        if (result.spreadStatus === "manual-override") {
+          return "Manual line override";
+        }
         if (result.spreadStatus === "open") {
           return "Pregame line";
         }
