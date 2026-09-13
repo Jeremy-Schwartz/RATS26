@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { describeApiKey, loadDotEnv } from "./env.js";
 import { buildStandings } from "./standings.js";
 import { mergePersistedGames } from "./lineLocking.js";
-import { applyLineOverrides } from "./lineOverrides.js";
+import { applyLineOverrides, summarizeLineOverrides } from "./lineOverrides.js";
 import { fetchOddsApiGames } from "./oddsApi.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -58,6 +58,17 @@ const server = createServer(async (request, response) => {
         spreadMarket: config.spreadMarket,
         hasApiKey: Boolean(config.apiKey),
         apiKeyStatus: describeApiKey(config.apiKey)
+      });
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/line-overrides") {
+      const gameStore = await readJson(gamesPath);
+      const overrides = await readOptionalJson(lineOverridesPath, []);
+      await sendJson(response, {
+        overrideFileExists: existsSync(lineOverridesPath),
+        overrideCount: overrides.length,
+        overrides: summarizeLineOverrides(gameStore.games, overrides)
       });
       return;
     }
