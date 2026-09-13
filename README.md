@@ -49,6 +49,7 @@ When the server is running, it also exposes:
 - `GET /api/dashboard` for dashboard data
 - `POST /api/sync` to pull latest odds and scores
 - `GET /api/config` to check current API settings
+- `GET /api/line-overrides` to confirm deployed manual line overrides and matching games
 
 By default, the server syncs every 15 minutes when `ODDS_API_KEY` is set. Before the regular season starts, sync pulls Week 1. After kickoff week, sync pulls the current regular-season week and keeps prior weeks in `data\games.json`.
 
@@ -70,6 +71,8 @@ If a synced line is wrong, add or edit an entry in `data\line-overrides.json`. O
   "note": "Manual closing line correction"
 }
 ```
+
+After deploying, open `/api/line-overrides` on the live site. `overrideCount` should be greater than zero, and the override should show at least one item in `matches`.
 
 ## ATS rule
 
