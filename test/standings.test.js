@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { calculateAtsResult, buildStandings } from "../src/standings.js";
 import { mergeOddsAndScores } from "../src/oddsApi.js";
 import { mergePersistedGames } from "../src/lineLocking.js";
-import { applyLineOverrides } from "../src/lineOverrides.js";
+import { applyLineOverrides, summarizeLineOverrides } from "../src/lineOverrides.js";
 
 test("calculates ATS win, loss, and push from the assigned team's perspective", () => {
   const game = {
@@ -249,6 +249,59 @@ test("applies manual line overrides by game id", () => {
       }
     }
   ], new Date("2026-09-10T03:30:00.000Z"));
+
+  assert.equal(corrected[0].spreads["Seattle Seahawks"], -3);
+  assert.equal(corrected[0].spreadStatus, "manual-override");
+});
+
+test("summarizes manual override matches for diagnostics", () => {
+  const summary = summarizeLineOverrides([
+    {
+      id: "seahawks-patriots",
+      week: 1,
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      spreadStatus: "manual-override"
+    }
+  ], [
+    {
+      week: 1,
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      spreads: {
+        "Seattle Seahawks": -3,
+        "New England Patriots": 3
+      }
+    }
+  ]);
+
+  assert.equal(summary[0].matches.length, 1);
+  assert.equal(summary[0].matches[0].id, "seahawks-patriots");
+});
+
+test("matches manual overrides when home and away teams are reversed", () => {
+  const corrected = applyLineOverrides([
+    {
+      id: "reversed-game",
+      week: 1,
+      homeTeam: "New England Patriots",
+      awayTeam: "Seattle Seahawks",
+      spreads: {
+        "Seattle Seahawks": 7.5,
+        "New England Patriots": -7.5
+      }
+    }
+  ], [
+    {
+      week: 1,
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      spreads: {
+        "Seattle Seahawks": -3,
+        "New England Patriots": 3
+      }
+    }
+  ]);
 
   assert.equal(corrected[0].spreads["Seattle Seahawks"], -3);
   assert.equal(corrected[0].spreadStatus, "manual-override");
