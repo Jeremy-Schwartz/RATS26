@@ -1,9 +1,10 @@
 import { createServer } from "node:http";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describeApiKey, loadDotEnv } from "./env.js";
+import { createGameStore } from "./gameStore.js";
 import { buildStandings } from "./standings.js";
 import { mergePersistedGames } from "./lineLocking.js";
 import { applyLineOverrides, summarizeLineOverrides } from "./lineOverrides.js";
@@ -28,8 +29,12 @@ const config = {
   oddsFormat: process.env.ODDS_FORMAT ?? "american",
   bookmaker: process.env.BOOKMAKER ?? "draftkings",
   syncIntervalMinutes: Number(process.env.SYNC_INTERVAL_MINUTES ?? 15),
-  regularSeasonStartDate: process.env.REGULAR_SEASON_START_DATE ?? `${process.env.SEASON ?? 2026}-09-10T00:00:00Z`
+  regularSeasonStartDate: process.env.REGULAR_SEASON_START_DATE ?? `${process.env.SEASON ?? 2026}-09-10T00:00:00Z`,
+  databaseUrl: process.env.DATABASE_URL,
+  databaseSsl: process.env.DATABASE_SSL === "true",
+  gamesPath
 };
+const gameStore = createGameStore(config);
 
 if (process.argv.includes("--sync-once")) {
   await syncGames();
@@ -57,18 +62,19 @@ const server = createServer(async (request, response) => {
         bookmaker: config.bookmaker,
         spreadMarket: config.spreadMarket,
         hasApiKey: Boolean(config.apiKey),
-        apiKeyStatus: describeApiKey(config.apiKey)
+        apiKeyStatus: describeApiKey(config.apiKey),
+        storage: gameStore.type
       });
       return;
     }
 
     if (request.method === "GET" && url.pathname === "/api/line-overrides") {
-      const gameStore = await readJson(gamesPath);
+      const gameStorePayload = await gameStore.read();
       const overrides = await readOptionalJson(lineOverridesPath, []);
       await sendJson(response, {
         overrideFileExists: existsSync(lineOverridesPath),
         overrideCount: overrides.length,
-        overrides: summarizeLineOverrides(gameStore.games, overrides)
+        overrides: summarizeLineOverrides(gameStorePayload.games, overrides)
       });
       return;
     }
@@ -82,6 +88,7 @@ const server = createServer(async (request, response) => {
 server.listen(config.port, () => {
   console.log(`RATS 2026 running at http://localhost:${config.port}`);
   console.log(`Using ${config.bookmaker} ${config.spreadMarket}; API key ${describeApiKey(config.apiKey)}`);
+  console.log(`Game storage: ${gameStore.type}`);
 });
 
 if (config.apiKey && config.syncIntervalMinutes > 0) {
@@ -92,8 +99,8 @@ if (config.apiKey && config.syncIntervalMinutes > 0) {
 
 async function buildDashboardPayload() {
   const league = await readJson(leaguePath);
-  const gameStore = await readJson(gamesPath);
-  const games = applyLineOverrides(gameStore.games, await readOptionalJson(lineOverridesPath, []));
+  const gameStorePayload = await gameStore.read();
+  const games = applyLineOverrides(gameStorePayload.games, await readOptionalJson(lineOverridesPath, []));
   const standings = buildStandings(league, games);
   const weeks = [...new Set(games.map((game) => game.week).filter(Number.isFinite))].sort((a, b) => a - b);
 
@@ -102,15 +109,16 @@ async function buildDashboardPayload() {
       season: league.season,
       members: league.members
     },
-    updatedAt: gameStore.updatedAt,
-    source: gameStore.source,
+    updatedAt: gameStorePayload.updatedAt,
+    source: gameStorePayload.source,
+    storage: gameStore.type,
     standings,
     weeks
   };
 }
 
 async function syncGames() {
-  const currentStore = await readJson(gamesPath);
+  const currentStore = await gameStore.read();
   const fetchedGames = await fetchOddsApiGames(config);
   const games = applyLineOverrides(
     mergePersistedGames(currentStore.games, fetchedGames),
@@ -122,11 +130,12 @@ async function syncGames() {
     games
   };
 
-  await writeFile(gamesPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  await gameStore.write(payload);
   return {
     ok: true,
     updatedAt: payload.updatedAt,
-    games: games.length
+    games: games.length,
+    storage: gameStore.type
   };
 }
 
