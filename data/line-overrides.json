@@ -8,6 +8,9 @@
       "Seattle Seahawks": -3,
       "New England Patriots": 3
     },
+    "homeScore": 13,
+    "awayScore": 10,
+    "completed": true,
     "note": "Manual closing line correction"
   }
 ]
