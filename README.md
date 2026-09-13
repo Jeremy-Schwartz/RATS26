@@ -36,6 +36,8 @@ This starter uses [The Odds API](https://the-odds-api.com/) for spreads and scor
 ODDS_API_KEY=your_key
 BOOKMAKER=draftkings
 REGULAR_SEASON_START_DATE=2026-09-10T00:00:00Z
+DATABASE_URL=
+DATABASE_SSL=false
 ```
 
 Sync once:
@@ -51,7 +53,13 @@ When the server is running, it also exposes:
 - `GET /api/config` to check current API settings
 - `GET /api/line-overrides` to confirm deployed manual line overrides and matching games
 
-By default, the server syncs every 15 minutes when `ODDS_API_KEY` is set. Before the regular season starts, sync pulls Week 1. After kickoff week, sync pulls the current regular-season week and keeps prior weeks in `data\games.json`.
+By default, the server syncs every 15 minutes when `ODDS_API_KEY` is set. Before the regular season starts, sync pulls Week 1. After kickoff week, sync pulls the current regular-season week and keeps prior weeks in the configured game store.
+
+## Persistent storage
+
+The app uses Postgres when `DATABASE_URL` is set. On Render, set `DATABASE_URL` to the Internal Database URL from your Render Postgres database. Leave `DATABASE_SSL=false` for Render internal database connections unless Render requires SSL for your specific connection string.
+
+If `DATABASE_URL` is blank, the app falls back to local JSON storage at `data\games.json`.
 
 Spreads are treated as closing lines. Each sync updates the spread before kickoff. Once a game starts, the app locks the most recent synced spread for that game and will not overwrite it later. For the closest approximation to the true closing line, run sync frequently before game windows, such as every 5-15 minutes on game days.
 
