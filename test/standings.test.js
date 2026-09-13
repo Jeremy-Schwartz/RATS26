@@ -254,6 +254,41 @@ test("applies manual line overrides by game id", () => {
   assert.equal(corrected[0].spreadStatus, "manual-override");
 });
 
+test("applies manual final score overrides", () => {
+  const corrected = applyLineOverrides([
+    {
+      id: "seahawks-patriots",
+      week: 1,
+      commenceTime: "2026-09-10T00:20:00Z",
+      homeTeam: "Seattle Seahawks",
+      awayTeam: "New England Patriots",
+      homeScore: null,
+      awayScore: null,
+      completed: false,
+      spreads: {
+        "Seattle Seahawks": -3,
+        "New England Patriots": 3
+      }
+    }
+  ], [
+    {
+      gameId: "seahawks-patriots",
+      homeScore: 13,
+      awayScore: 10,
+      completed: true,
+      spreads: {
+        "Seattle Seahawks": -3,
+        "New England Patriots": 3
+      }
+    }
+  ]);
+
+  assert.equal(corrected[0].homeScore, 13);
+  assert.equal(corrected[0].awayScore, 10);
+  assert.equal(corrected[0].completed, true);
+  assert.equal(calculateAtsResult(corrected[0], "Seattle Seahawks").result, "push");
+});
+
 test("summarizes manual override matches for diagnostics", () => {
   const summary = summarizeLineOverrides([
     {
