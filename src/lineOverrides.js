@@ -7,8 +7,9 @@ export function applyLineOverrides(games, overrides, now = new Date()) {
 
     return {
       ...game,
-      spreads: override.spreads,
-      spreadStatus: "manual-override",
+      ...buildScoreOverride(override),
+      spreads: override.spreads ?? game.spreads,
+      spreadStatus: override.spreads ? "manual-override" : game.spreadStatus,
       spreadUpdatedAt: game.spreadUpdatedAt ?? now.toISOString(),
       spreadLockedAt: game.spreadLockedAt ?? now.toISOString(),
       manualOverride: {
@@ -28,6 +29,9 @@ export function summarizeLineOverrides(games, overrides) {
       homeTeam: override.homeTeam ?? null,
       awayTeam: override.awayTeam ?? null,
       spreads: override.spreads,
+      homeScore: override.homeScore ?? null,
+      awayScore: override.awayScore ?? null,
+      completed: override.completed ?? null,
       note: override.note ?? null,
       matches: matchingGames.map((game) => ({
         id: game.id,
@@ -38,6 +42,22 @@ export function summarizeLineOverrides(games, overrides) {
       }))
     };
   });
+}
+
+function buildScoreOverride(override) {
+  const fields = {};
+
+  if (Object.hasOwn(override, "homeScore")) {
+    fields.homeScore = override.homeScore;
+  }
+  if (Object.hasOwn(override, "awayScore")) {
+    fields.awayScore = override.awayScore;
+  }
+  if (Object.hasOwn(override, "completed")) {
+    fields.completed = override.completed;
+  }
+
+  return fields;
 }
 
 function findOverride(game, overrides) {
