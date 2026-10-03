@@ -63,6 +63,8 @@ If `DATABASE_URL` is blank, the app falls back to local JSON storage at `data\ga
 
 Spreads are treated as closing lines. Each sync updates the spread before kickoff. Once a game starts, the app locks the most recent synced spread for that game and will not overwrite it later. For the closest approximation to the true closing line, run sync frequently before game windows, such as every 5-15 minutes on game days.
 
+A pregame update replaces a saved line only when both teams have finite numeric spreads that are opposites. Missing markets, score-only responses, and incomplete or invalid lines preserve the last usable spread and its capture timestamp. A valid 0/0 (pick'em) line is accepted. Locked and manually overridden lines remain protected even if the feed later changes the kickoff time. This prevents future losses; it cannot recover a line already lost.
+
 ## Manual line and score corrections
 
 If a synced line or final score is wrong or missing, add or edit an entry in `data\line-overrides.json`. Overrides are applied on the dashboard and after every sync, so they survive redeploys and cannot be overwritten by the API.
