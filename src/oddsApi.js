@@ -65,25 +65,27 @@ export function mergeOddsAndScores(odds, scores, config) {
 
 function normalizeOddsGame(game, scoreGame, config) {
   const scoreMap = buildScoreMap(scoreGame);
-    const market = selectSpreadMarket(game, config);
-    const spreads = {};
+  const market = selectSpreadMarket(game, config);
+  const spreads = {};
 
-    for (const outcome of market?.outcomes ?? []) {
-      spreads[outcome.name] = Number(outcome.point);
+  for (const outcome of market?.outcomes ?? []) {
+    if (Number.isFinite(outcome.point)) {
+      spreads[outcome.name] = outcome.point;
     }
+  }
 
   return {
-      id: game.id,
-      season: Number(config.season),
-      week: inferWeek(game.commence_time, config),
-      commenceTime: game.commence_time,
-      homeTeam: game.home_team,
-      awayTeam: game.away_team,
-      homeScore: scoreMap.has(game.home_team) ? scoreMap.get(game.home_team) : null,
-      awayScore: scoreMap.has(game.away_team) ? scoreMap.get(game.away_team) : null,
-      completed: Boolean(scoreGame?.completed),
-      spreads
-    };
+    id: game.id,
+    season: Number(config.season),
+    week: inferWeek(game.commence_time, config),
+    commenceTime: game.commence_time,
+    homeTeam: game.home_team,
+    awayTeam: game.away_team,
+    homeScore: scoreMap.has(game.home_team) ? scoreMap.get(game.home_team) : null,
+    awayScore: scoreMap.has(game.away_team) ? scoreMap.get(game.away_team) : null,
+    completed: Boolean(scoreGame?.completed),
+    spreads
+  };
 }
 
 function normalizeScoreGame(game, config) {

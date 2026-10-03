@@ -16,8 +16,8 @@ export function mergePersistedGames(currentGames, fetchedGames, now = new Date()
 }
 
 function initializeGame(fetchedGame, now) {
+  const hasFetchedSpread = hasSpread(fetchedGame);
   if (hasGameStarted(fetchedGame, now)) {
-    const hasFetchedSpread = hasSpread(fetchedGame);
     return {
       ...fetchedGame,
       spreads: hasFetchedSpread ? fetchedGame.spreads : {},
@@ -29,23 +29,34 @@ function initializeGame(fetchedGame, now) {
 
   return {
     ...fetchedGame,
+    spreads: hasFetchedSpread ? fetchedGame.spreads : {},
     spreadStatus: "open",
-    spreadUpdatedAt: now.toISOString(),
+    spreadUpdatedAt: hasFetchedSpread ? now.toISOString() : null,
     spreadLockedAt: null
   };
 }
 
 function mergeGame(currentGame, fetchedGame, now) {
-  if (hasGameStarted(fetchedGame, now)) {
-    const hasCapturedSpread = hasSpread(currentGame);
-    const hasFetchedSpread = hasSpread(fetchedGame);
+  const hasCapturedSpread = hasSpread(currentGame);
+  const hasFetchedSpread = hasSpread(fetchedGame);
+  const alreadyLocked = hasCapturedSpread && (
+    currentGame.spreadStatus === "locked" ||
+    currentGame.spreadStatus === "manual-override" ||
+    currentGame.spreadLockedAt != null
+  );
+
+  if (alreadyLocked || hasGameStarted(fetchedGame, now)) {
     const spreads = hasCapturedSpread ? currentGame.spreads : hasFetchedSpread ? fetchedGame.spreads : {};
     return {
       ...currentGame,
       ...fetchedGame,
       spreads,
-      spreadStatus: hasCapturedSpread || hasFetchedSpread ? "locked" : "missing-line",
-      spreadUpdatedAt: currentGame.spreadUpdatedAt ?? (hasFetchedSpread ? now.toISOString() : null),
+      spreadStatus: hasCapturedSpread && currentGame.spreadStatus === "manual-override"
+        ? "manual-override"
+        : hasCapturedSpread || hasFetchedSpread ? "locked" : "missing-line",
+      spreadUpdatedAt: hasCapturedSpread
+        ? currentGame.spreadUpdatedAt ?? null
+        : hasFetchedSpread ? now.toISOString() : null,
       spreadLockedAt: hasCapturedSpread || hasFetchedSpread ? currentGame.spreadLockedAt ?? now.toISOString() : null
     };
   }
@@ -53,9 +64,11 @@ function mergeGame(currentGame, fetchedGame, now) {
   return {
     ...currentGame,
     ...fetchedGame,
-    spreads: fetchedGame.spreads,
+    spreads: hasFetchedSpread ? fetchedGame.spreads : hasCapturedSpread ? currentGame.spreads : {},
     spreadStatus: "open",
-    spreadUpdatedAt: now.toISOString(),
+    spreadUpdatedAt: hasFetchedSpread
+      ? now.toISOString()
+      : hasCapturedSpread ? currentGame.spreadUpdatedAt ?? null : null,
     spreadLockedAt: null
   };
 }
@@ -66,5 +79,7 @@ function hasGameStarted(game, now) {
 }
 
 function hasSpread(game) {
-  return Object.keys(game.spreads ?? {}).length > 0;
+  const homeSpread = game.spreads?.[game.homeTeam];
+  const awaySpread = game.spreads?.[game.awayTeam];
+  return Number.isFinite(homeSpread) && Number.isFinite(awaySpread) && homeSpread + awaySpread === 0;
 }
