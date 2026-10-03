@@ -12,5 +12,19 @@
     "awayScore": 10,
     "completed": true,
     "note": "Manual closing line correction"
+  },
+  {
+    "gameId": "d55cb69fed50a09170560b5b75d8de86",
+    "week": 4,
+    "homeTeam": "Cleveland Browns",
+    "awayTeam": "Pittsburgh Steelers",
+    "spreads": {
+      "Cleveland Browns": 3,
+      "Pittsburgh Steelers": -3
+    },
+    "homeScore": 27,
+    "awayScore": 24,
+    "completed": true,
+    "note": "User-confirmed closing spread and final score"
   }
 ]
